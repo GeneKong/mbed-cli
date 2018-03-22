@@ -1814,16 +1814,18 @@ def subcommand(name, *args, **kwargs):
     dict(name='--program', action='store_true', help='Force creation of an mbed program. Default: auto.'),
     dict(name='--library', action='store_true', help='Force creation of an mbed library. Default: auto.'),
     dict(name='--mbedlib', action='store_true', help='Add the mbed library instead of mbed-os into the program.'),
+    dict(name='--mbed-os-url', nargs='?', help='Special mbed os url instead default %s' % mbed_os_url),
     dict(name='--create-only', action='store_true', help='Only create a program, do not import mbed-os or mbed library.'),
     dict(name='--depth', nargs='?', help='Number of revisions to fetch the mbed OS repository when creating new program. Default: all revisions.'),
     dict(name='--protocol', nargs='?', help='Transport protocol when fetching the mbed OS repository when creating new program. Supported: https, http, ssh, git. Default: inferred from URL.'),
+
     help='Create new mbed program or library',
     description=(
         "Creates a new mbed program if executed within a non-program location.\n"
         "Alternatively creates an mbed library if executed within an existing program.\n"
         "When creating new program, the latest mbed-os release will be downloaded/added\n unless --create-only is specified.\n"
         "Supported source control management: git, hg"))
-def new(name, scm='git', program=False, library=False, mbedlib=False, create_only=False, depth=None, protocol=None):
+def new(name, scm='git', program=False, library=False, mbedlib=False, mbed_os_url=mbed_os_url, create_only=False, depth=None, protocol=None):
     global cwd_root
 
     d_path = os.path.abspath(name or getcwd())
@@ -1897,6 +1899,7 @@ def new(name, scm='git', program=False, library=False, mbedlib=False, create_onl
 @subcommand('import',
     dict(name='url', help='URL of the program'),
     dict(name='path', nargs='?', help='Destination name or path. Default: current directory.'),
+    dict(name='--mbed-base-url', nargs='?', help='Special mbed base url instead default %s' % mbed_base_url),
     dict(name=['-I', '--ignore'], action='store_true', help='Ignore errors related to cloning and updating.'),
     dict(name='--depth', nargs='?', help='Number of revisions to fetch from the remote repository. Default: all revisions.'),
     dict(name='--protocol', nargs='?', help='Transport protocol for the source control management. Supported: https, http, ssh, git. Default: inferred from URL.'),
@@ -1906,7 +1909,7 @@ def new(name, scm='git', program=False, library=False, mbedlib=False, create_onl
         "Imports mbed program and its dependencies from a source control based URL\n"
         "(GitHub, Bitbucket, mbed.org) into the current directory or specified\npath.\n"
         "Use 'mbed add <URL>' to add a library into an existing program."))
-def import_(url, path=None, ignore=False, depth=None, protocol=None, top=True):
+def import_(url, path=None, mbed_base_url=mbed_base_url, ignore=False, depth=None, protocol=None, top=True):
     global cwd_root
 
     # translate 'mbed-os' to https://github.com/ARMmbed/mbed-os
