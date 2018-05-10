@@ -1817,6 +1817,7 @@ def subcommand(name, *args, **kwargs):
     dict(name='--create-only', action='store_true', help='Only create a program, do not import mbed-os or mbed library.'),
     dict(name='--depth', nargs='?', help='Number of revisions to fetch the mbed OS repository when creating new program. Default: all revisions.'),
     dict(name='--protocol', nargs='?', help='Transport protocol when fetching the mbed OS repository when creating new program. Supported: https, http, ssh, git. Default: inferred from URL.'),
+    dict(name='--insecure', action='store_true', help='Allow insecure repository URLs. By default mbed CLI imports only "safe" URLs, e.g. based on standard ports - 80, 443 and 22. This option enables the use of arbitrary URLs/ports.'),
 
     help='Create new mbed program or library',
     description=(
@@ -1824,7 +1825,7 @@ def subcommand(name, *args, **kwargs):
         "Alternatively creates an mbed library if executed within an existing program.\n"
         "When creating new program, the latest mbed-os release will be downloaded/added\n unless --create-only is specified.\n"
         "Supported source control management: git, hg"))
-def new(name, scm='git', program=False, library=False, mbedlib=False, mbed_os_url=mbed_os_url, create_only=False, depth=None, protocol=None):
+def new(name, scm='git', program=False, library=False, mbedlib=False, mbed_os_url=mbed_os_url, create_only=False, depth=None, protocol=None, insecure=False):
     global cwd_root
 
     d_path = os.path.abspath(name or getcwd())
@@ -1879,7 +1880,7 @@ def new(name, scm='git', program=False, library=False, mbedlib=False, mbed_os_ur
             d = 'mbed' if mbedlib else 'mbed-os'
             try:
                 with cd(d_path):
-                    add(url, depth=depth, protocol=protocol, top=False)
+                    add(url, depth=depth, protocol=protocol, insecure=insecure, top=False)
             except Exception as e:
                 if os.path.isdir(os.path.join(d_path, d)):
                     rmtree_readonly(os.path.join(d_path, d))
